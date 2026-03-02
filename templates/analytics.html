@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance Analytics</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .chart-container {
+            width: 80%;
+            margin: auto;
+        }
+
+        table {
+            width: 65%;
+            margin: 30px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #2c7be5;
+            color: white;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            text-decoration: none;
+            color: #2c7be5;
+            font-weight: bold;
+        }
+
+        .flash {
+            width: 60%;
+            margin: 10px auto;
+            padding: 10px;
+            background: #eaf4ff;
+            border: 1px solid #2c7be5;
+            color: #2c7be5;
+            border-radius: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Attendance Analytics</h2>
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="flash">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+{% if analytics_data and analytics_data|length > 0 %}
+
+<div class="chart-container">
+    <canvas id="attendanceChart"></canvas>
+</div>
+
+<table>
+    <tr>
+        <th>Course Name</th>
+        <th>Average Absentees (%)</th>
+    </tr>
+
+    {% for data in analytics_data %}
+    <tr>
+        <td>{{ data.course_name }}</td>
+        <td>{{ data.avg_absent }}%</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+    <p style="text-align:center; margin-top:40px;">
+        No attendance data available yet.
+    </p>
+{% endif %}
+
+<div class="back-link">
+    <a href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
+</div>
+
+<script>
+    {% if analytics_data and analytics_data|length > 0 %}
+    const ctx = document.getElementById('attendanceChart').getContext('2d');
+
+    const labels = {{ analytics_data | map(attribute='course_name') | list | tojson }};
+    const values = {{ analytics_data | map(attribute='avg_absent') | list | tojson }};
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Average Absentees (%)',
+                data: values,
+                backgroundColor: '#2c7be5'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Average Absentees per Course'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+    {% endif %}
+</script>
+
+</body>
+</html>

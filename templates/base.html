@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Attendance System{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        nav {
+            background: #2c7be5;
+            padding: 12px 20px;
+        }
+
+        nav a {
+            color: white;
+            margin-right: 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .flash {
+            margin: 15px;
+            padding: 10px;
+            background: #eaf4ff;
+            border-left: 5px solid #2c7be5;
+            color: #2c7be5;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
+<nav>
+
+    <!-- TEACHER NAVBAR -->
+    {% if session.teacher_id %}
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('classes') }}">Classes</a>
+        <a href="{{ url_for('analytics') }}">Analytics</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+
+    <!-- ADMIN NAVBAR -->
+    {% elif session.admin_id %}
+        <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+        <a href="{{ url_for('admin_logout') }}">Logout</a>
+
+    <!-- PUBLIC NAVBAR -->
+    {% else %}
+        <a href="{{ url_for('login') }}">Teacher Login</a>
+        <a href="{{ url_for('signup') }}">Teacher Signup</a>
+        <a href="{{ url_for('admin_login') }}">Admin Login</a>
+    {% endif %}
+
+</nav>
+
+<!-- ================= FLASH MESSAGES ================= -->
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="flash">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<hr>
+
+<!-- ================= PAGE CONTENT ================= -->
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

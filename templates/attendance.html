@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mark Attendance</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #2c7be5;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f1f1f1;
+        }
+
+        button, .btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #2c7be5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        button:hover, .btn:hover {
+            background: #1a68d1;
+        }
+
+        .present { background-color: #d4edda; }
+        .absent { background-color: #f8d7da; }
+
+        #search {
+            margin-bottom: 15px;
+            padding: 8px;
+            width: 250px;
+        }
+
+        .bulk-actions button {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .flash {
+            background: #eaf4ff;
+            border: 1px solid #2c7be5;
+            color: #2c7be5;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .actions {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Mark Attendance ({{ today }})</h2>
+
+<!-- Flash messages -->
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="flash">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<!-- Search -->
+<input type="text" id="search" placeholder="Search student by name..." onkeyup="filterStudents()">
+
+<!-- Bulk actions -->
+<div class="bulk-actions">
+    <button type="button" onclick="markAll('Present')">Mark All Present</button>
+    <button type="button" onclick="markAll('Absent')">Mark All Absent</button>
+</div>
+
+<form method="post">
+    <table id="attendanceTable">
+        <tr>
+            <th>Student Name</th>
+            <th>Present</th>
+            <th>Absent</th>
+        </tr>
+
+        {% for student in students %}
+        <tr>
+            <td class="student-name">{{ student.student_name }}</td>
+
+            <td>
+                <input type="radio"
+                       name="status_{{ student.student_id }}"
+                       value="Present"
+                       required
+                       onchange="updateRowColor(this)">
+            </td>
+
+            <td>
+                <input type="radio"
+                       name="status_{{ student.student_id }}"
+                       value="Absent"
+                       onchange="updateRowColor(this)">
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div class="actions">
+        <button type="submit">Submit Attendance</button>
+        <a href="{{ url_for('attendance_pdf', course_id=course_id) }}" class="btn">Download PDF</a>
+        <a href="{{ url_for('classes') }}" class="btn">Back to Classes</a>
+    </div>
+</form>
+
+<script>
+function markAll(status) {
+    document.querySelectorAll("#attendanceTable tr").forEach((row, index) => {
+        if (index === 0) return;
+        const radio = row.querySelector(`input[value="${status}"]`);
+        if (radio) {
+            radio.checked = true;
+            updateRowColor(radio);
+        }
+    });
+}
+
+function updateRowColor(radio) {
+    const row = radio.closest("tr");
+    row.classList.remove("present", "absent");
+
+    if (radio.value === "Present") row.classList.add("present");
+    if (radio.value === "Absent") row.classList.add("absent");
+}
+
+function filterStudents() {
+    const filter = document.getElementById("search").value.toUpperCase();
+    document.querySelectorAll("#attendanceTable tr").forEach((row, index) => {
+        if (index === 0) return;
+        const name = row.querySelector(".student-name").textContent.toUpperCase();
+        row.style.display = name.includes(filter) ? "" : "none";
+    });
+}
+</script>
+
+</body>
+</html>

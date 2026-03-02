@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ student.student_name }} — Attendance Summary</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* General body styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            padding: 30px 15px;
+            margin: 0;
+        }
+
+        h2, p {
+            text-align: center;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        /* Table styling */
+        table {
+            width: 90%;
+            max-width: 900px;
+            margin: 25px auto;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #2c7be5;
+            color: white;
+            font-size: 16px;
+        }
+
+        tr:hover {
+            background: #f1f1f1;
+            transition: background 0.2s;
+        }
+
+        /* Attendance percentage colors */
+        .low {
+            color: #d9534f;
+            font-weight: bold;
+        }
+
+        .good {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            th, td {
+                padding: 10px 5px;
+                font-size: 14px;
+            }
+
+            table {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>{{ student.student_name }} — Attendance Summary</h2>
+    <p>Class: {{ student.class_name }}</p>
+
+    <table>
+        <tr>
+            <th>Course</th>
+            <th>Total Classes</th>
+            <th>Present</th>
+            <th>Absent</th>
+            <th>Percentage</th>
+        </tr>
+
+        {% for row in summary %}
+        {% set percentage = (row.present_days / row.total_classes * 100) if row.total_classes else 0 %}
+        <tr>
+            <td>{{ row.course_name }}</td>
+            <td>{{ row.total_classes }}</td>
+            <td>{{ row.present_days }}</td>
+            <td>{{ row.absent_days }}</td>
+            <td class="{{ 'low' if percentage < 75 else 'good' }}">
+                {{ "%.2f"|format(percentage) }}%
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

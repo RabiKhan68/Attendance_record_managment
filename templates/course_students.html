@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ course_name }} — Students</title>
+
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            color: #333;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #2c7be5, #1a68d1);
+            color: white;
+            padding: 16px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 18px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+
+        /* Container */
+        .container {
+            padding: 35px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        th {
+            background: #2c7be5;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f1f1f1;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 14px;
+            background: #2c7be5;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #1a68d1;
+            transform: translateY(-2px);
+        }
+
+        /* Back button */
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            background: #6c757d;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+        }
+
+        @media (max-width: 600px) {
+            th, td {
+                font-size: 12px;
+                padding: 10px 8px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div>📊 Attendance System</div>
+        <div>
+            Welcome, {{ session.teacher_name }}
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="container">
+        <a href="{{ url_for('courses_by_class', class_id=students[0]['class_id'] if students else 0) }}" class="btn back-btn">← Back to Courses</a>
+        <h2>{{ course_name }} — Students</h2>
+
+        {% if students %}
+        <table>
+            <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+            </tr>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.student_id }}</td>
+                <td>{{ student.student_name }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p style="text-align:center; color:#777;">No students assigned to this course yet.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

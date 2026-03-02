@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Students (Admin)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: #2c7be5;
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            font-size: 14px;
+        }
+
+        /* Container */
+        .container {
+            padding: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Form */
+        .form-box {
+            max-width: 400px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 12px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: #2c7be5;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #2c7be5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #1a68d1;
+        }
+
+        .success, .error {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    Admin Dashboard → Add Students
+    <a href="/logout" style="float:right;">Logout</a>
+</div>
+
+<div class="container">
+    <h2>Add Student</h2>
+
+    <div class="form-box">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, msg in messages %}
+                <div class="{{ category }}">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="post">
+            <input type="text" name="student_name" placeholder="Student Full Name" required>
+
+            <select name="class_id" required>
+                <option value="">Select Class</option>
+                {% for cls in classes %}
+                    <option value="{{ cls.class_id }}">{{ cls.class_name }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Add Student</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Courses</title>
+
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #2c7be5, #1a68d1);
+            color: white;
+            padding: 16px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 18px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+
+        /* Page */
+        .container {
+            padding: 35px;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: #333;
+            text-align: center;
+        }
+
+        /* Course grid */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .course-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+        }
+
+        .course-name {
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #2c7be5;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 9px 16px;
+            margin: 6px;
+            background: #2c7be5;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #1a68d1;
+        }
+
+        .btn.secondary {
+            background: #6c757d;
+        }
+
+        .btn.secondary:hover {
+            background: #5a6268;
+        }
+
+        .empty {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            color: #777;
+            max-width: 500px;
+            margin: 50px auto;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div>📚 Teacher Dashboard → Courses</div>
+    <div>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('analytics') }}">Analytics</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+    <h2>Select a Course</h2>
+
+    {% if courses %}
+    <div class="course-grid">
+        {% for course in courses %}
+        <div class="course-card">
+            <div class="course-name">
+                {{ course.course_name }}
+            </div>
+
+            <a href="{{ url_for('attendance', course_id=course.course_id) }}" class="btn">
+                Mark Attendance
+            </a>
+
+            <a href="{{ url_for('attendance_pdf', course_id=course.course_id) }}" class="btn secondary">
+                Download Report
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <div class="empty">
+            No courses assigned to you yet.
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
