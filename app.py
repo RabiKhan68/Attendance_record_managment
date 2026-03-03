@@ -362,6 +362,45 @@ def add_course():
     return render_template("add_course.html", classes=classes)
 
 # ---------- ADMIN ROUTES ----------
+# ---------- ADMIN SIGNUP ----------
+@app.route("/admin/signup", methods=["GET", "POST"])
+def admin_signup():
+    error = None
+
+    if request.method == "POST":
+        name = request.form["name"]
+        email = request.form["email"]
+        password = request.form["password"]
+        password2 = request.form["password2"]
+
+        if password != password2:
+            error = "Passwords do not match"
+        else:
+            db = get_db_connection()
+            cursor = db.cursor(dictionary=True)
+
+            # Check if admin already exists
+            cursor.execute("SELECT * FROM admin WHERE email=%s", (email,))
+            if cursor.fetchone():
+                error = "Admin already exists"
+            else:
+                hashed_pw = generate_password_hash(password)
+                cursor.execute(
+                    "INSERT INTO admin (name, email, password_hash) VALUES (%s, %s, %s)",
+                    (name, email, hashed_pw)
+                )
+                db.commit()
+                cursor.close()
+                db.close()
+
+                flash("Admin created successfully. Please login.", "success")
+                return redirect(url_for("admin_login"))
+
+            cursor.close()
+            db.close()
+
+    return render_template("admin/admin_signup.html", error=error)
+
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
     error = None
